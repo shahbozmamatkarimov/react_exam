@@ -1,0 +1,63 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.px1 {
+    padding: 1.5rem;
+}
+
+.gap40 {
+    gap: 40px;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-right: 20px;
+}
+
+.edit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    background: #FFC1073D;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    background: #FF484252;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.fontweght {
+    font-weight: 600;
+    color: #212B36;
+}
+
+.fs14{
+    font-size: 14px;
+}
+
+.fs16{
+    font-size: 16px;
+}

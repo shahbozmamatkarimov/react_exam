@@ -1,0 +1,112 @@
+.px1 {
+    padding: 1.5rem;
+}
+
+.gap40 {
+    gap: 40px;
+}
+
+.margin {
+    margin: 0 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.edit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px, 40px;
+    height: 48px;
+    width: 160px;
+    background: #FFC107;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px, 40px;
+    height: 48px;
+    width: 160px;
+    background: #FF4842;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.btnGroup{
+    display: flex;
+    gap: 24px;
+    padding: 30px 0;
+}
+
+.fontweght {
+    font-weight: 600;
+}
+
+.brand {
+    background: #FF484229;
+    color: #B72136;
+    padding: 1px, 8px, 1px, 8px;
+    border-radius: 6px;
+    border: 0;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.stars {
+    font-weight: 400;
+    font-size: 14px;
+    padding-left: 5px;
+    color: #637381;
+}
+
+.discount {
+    font-weight: 600;
+    font-size: 24px;
+    color: #919EAB;
+    text-decoration: line-through;
+}
+
+.price {
+    font-weight: 700;
+    font-size: 24px;
+    color: #212B36;
+    padding-left: 5px;
+}
+
+.imageGroup {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+}
+
+.imageGroup * {
+    border-radius: 7px;
+}
+
+.selected {
+    cursor: pointer;
+}
+
+@media (max-width: 945px){
+    .flex {
+        display: flex;
+        flex-direction: column;
+        max-width: fit-content;
+    }
+}
