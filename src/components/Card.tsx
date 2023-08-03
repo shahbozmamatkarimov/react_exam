@@ -20,6 +20,8 @@ import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Image from "next/image";
+import ProductServices from "../services/products";
+import axios from "axios";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -37,6 +39,15 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function Cards() {
+  const [products, setProducts] = React.useState([]);
+
+  React.useEffect(() => {
+    axios.get("https://dummyjson.com/products").then((res) => {
+      console.log(res.data.products);
+      setProducts(res?.data?.products);
+    });
+  }, []);
+
   const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const [expanded, setExpanded] = React.useState(false);
 
@@ -46,30 +57,25 @@ export default function Cards() {
 
   return (
     <>
-      <div
-        className={[
-          styles.grid,
-          styles.px1,
-          styles.gap40,
-        ].join(" ")}
-      >
-        {cards.map((card) => (
+      <div className={[styles.grid, styles.px1, styles.gap40].join(" ")}>
+        {products?.map((card: any) => (
           <Card
-            key={card}
+            key={card.id}
             sx={{
               maxWidth: 344,
+              minWidth: 344,
               borderRadius: "15px",
               boxShadow: "0px 8px 16px #eaeff0",
-              pb: "16px"
+              pb: "16px",
             }}
           >
-            <Link href={`/${card}`}>
+            <Link href={`/${card.id}`}>
               <CardMedia
                 component="img"
                 height="344"
                 width="344"
-                sx={{ cursor: "pointer" }}
-                image="https://media.istockphoto.com/id/1093110112/photo/picturesque-morning-in-plitvice-national-park-colorful-spring-scene-of-green-forest-with-pure.jpg?s=612x612&w=0&k=20&c=lpQ1sQI49bYbTp9WQ_EfVltAqSP1DXg0Ia7APTjjxz4="
+                sx={{ cursor: "pointer", objectFit: "cover" }}
+                image={card.thumbnail}
                 alt="Paella dish"
               />
             </Link>
@@ -78,13 +84,16 @@ export default function Cards() {
                 variant="body2"
                 className={[styles.fontweight, styles.fs14].join(" ")}
               >
-                Bárbara Cotilla
+                {card.category}
               </Typography>
             </CardContent>
             <div className={[styles.flex].join(" ")}>
               <CardContent>
-                <Typography className={[styles.fontweight, styles.fs16].join(" ")} variant="body2">
-                    $28.56
+                <Typography
+                  className={[styles.fontweight, styles.fs16].join(" ")}
+                  variant="body2"
+                >
+                  ${card.price}
                 </Typography>
               </CardContent>
               <div className={styles.actions}>

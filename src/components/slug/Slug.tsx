@@ -4,7 +4,6 @@ import starWhite from "@/assets/svg/starWhite.svg";
 import deleteSVG from "@/assets/svg/delete2.svg";
 import editSVG from "@/assets/svg/edit.svg";
 import img from "@/assets/IMG.png";
-import LabTabs from "./Tabs";
 import { useRouter } from "next/router";
 // MUI
 import * as React from "react";
@@ -25,6 +24,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Image from "next/image";
 
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import ProductServices from "../../services/products";
+
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
@@ -41,7 +50,16 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function Slug() {
+  const [products, setProducts] = React.useState<string[]>([]);
+  const [value, setValue] = React.useState("1");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
   const router = useRouter();
+
+  const id = router.asPath;
 
   const images = [1, 2, 3, 4, 5];
   const [expanded, setExpanded] = React.useState(false);
@@ -50,69 +68,138 @@ export default function Slug() {
     setExpanded(!expanded);
   };
 
+  React.useEffect(() => {
+    if (id == "/[slug]") return;
+    console.log(id);
+    axios.get(`https://dummyjson.com/products${id}`).then((res) => {
+      console.log(res.data);
+      setProducts([res?.data]);
+    });
+  }, [id]);
+
   return (
     <>
-      <button type="button" className={[styles.edit, styles.margin].join(" ")} onClick={() => router.back()}>
+      <button
+        type="button"
+        className={[styles.edit, styles.margin].join(" ")}
+        onClick={() => router.back()}
+      >
         Back to home page
       </button>
-      <div className={[styles.flex, styles.px1, styles.gap40].join(" ")}>
-        <div>
-          <Card
+      {products?.map((product: any) => (
+        <div key={product.id}>
+          <div
+            
+            className={[styles.flex, styles.px1, styles.gap40].join(" ")}
+          >
+            <div>
+              <Card
+                sx={{
+                  maxWidth: 500,
+                  height: { default: 300, sm: 500 },
+                  borderRadius: "10px",
+                  boxShadow: "0px 8px 16px #eaeff0",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="500"
+                  image={product.thumbnail}
+                  alt="Paella dish"
+                />
+              </Card>
+              <div className={styles.imageGroup}>
+                {product.images.map((image: any) => (
+                  <Image
+                    key={image}
+                    src={image}
+                    className={styles.selected}
+                    alt=""
+                    objectFit="cover"
+                    width={64}
+                    height={64}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <button className={styles.brand}>{product.brand}</button>
+              <h2>{product.description}</h2>
+              <div>
+                {["0", "2", "3", "4", "5"]
+                  .slice(0, Math.floor(product.rating))
+                  .map((img) => (
+                    <Image key={img} src={star} alt="" width={14} height={14} />
+                  ))}
+                {["0", "2", "3", "4", "5"]
+                  .splice(0, 5 - Math.floor(product.rating))
+                  .map((img) => (
+                    <Image
+                      key={img}
+                      src={starWhite}
+                      alt=""
+                      width={14}
+                      height={14}
+                    />
+                  ))}
+                <span className={styles.stars}>{product.rating}</span>
+              </div>
+              <p className={styles.flex}>
+                <span className={styles.discount}>${product.price - 21}</span>
+                <span className={styles.price}>${product.price}</span>
+              </p>
+              <div className={styles.btnGroup}>
+                <button className={styles.edit}>
+                  <Image src={editSVG} alt="edit" width={20} height={20} />
+                  Изменить
+                </button>
+                <button className={styles.delete}>
+                  <Image src={deleteSVG} alt="delete" width={16} height={16} />
+                  Удалить
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <Box
             sx={{
-              maxWidth: 500,
-              height: {default: 300, sm: 500},
+              maxWidth: "100%",
+              margin: "1rem",
+              boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+              border: "1px solid rgba(100, 100, 111, 0.2)",
+              typography: "body1",
               borderRadius: "10px",
-              boxShadow: "0px 8px 16px #eaeff0",
+              mb: "10rem",
             }}
           >
-            <CardMedia
-              component="img"
-              height="500"
-              image="https://media.istockphoto.com/id/1093110112/photo/picturesque-morning-in-plitvice-national-park-colorful-spring-scene-of-green-forest-with-pure.jpg?s=612x612&w=0&k=20&c=lpQ1sQI49bYbTp9WQ_EfVltAqSP1DXg0Ia7APTjjxz4="
-              alt="Paella dish"
-            />
-          </Card>
-          <div className={styles.imageGroup}>
-            {images.map((image) => (
-              <Image
-                key={image}
-                src={img}
-                className={styles.selected}
-                alt=""
-                width={64}
-                height={64}
-              />
-            ))}
-          </div>
+            <TabContext value={value}>
+              <Box
+                sx={{
+                  borderBottom: 1,
+                  borderColor: "divider",
+                  bgcolor: "#F4F6F8",
+                }}
+              >
+                <TabList
+                  onChange={handleChange}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab
+                    sx={{ fontSize: "12px" }}
+                    label="Description"
+                    value="1"
+                  />
+                  <Tab sx={{ fontSize: "12px" }} label="Category" value="2" />
+                </TabList>
+              </Box>
+              <TabPanel value="1">{product.description}</TabPanel>
+              <TabPanel value="2">
+                {product.category}
+              </TabPanel>
+            </TabContext>
+          </Box>
         </div>
-        <div>
-          <button className={styles.brand}>Brand</button>
-          <h2>AE 24/7 Active Hoodie With Gaiter</h2>
-          <div>
-            <Image src={star} alt="" width={14} height={14} />
-            <Image src={star} alt="" width={14} height={14} />
-            <Image src={star} alt="" width={14} height={14} />
-            <Image src={star} alt="" width={14} height={14} />
-            <Image src={starWhite} alt="" width={14} height={14} />
-            <span className={styles.stars}>4.54</span>
-          </div>
-          <p className={styles.flex}>
-            <span className={styles.discount}>$62.97</span>
-            <span className={styles.price}>$62.97</span>
-          </p>
-          <div className={styles.btnGroup}>
-            <button className={styles.edit}>
-              <Image src={editSVG} alt="edit" width={20} height={20} />
-              Изменить
-            </button>
-            <button className={styles.delete}>
-              <Image src={deleteSVG} alt="delete" width={16} height={16} />
-              Удалить
-            </button>
-          </div>
-        </div>
-      </div>
-      <LabTabs />
+      ))}
     </>
   );
 }
