@@ -103,6 +103,10 @@
     cursor: pointer;
 }
 
+.select {
+    outline: 3px solid blue;
+}
+
 @media (max-width: 945px){
     .flex {
         display: flex;

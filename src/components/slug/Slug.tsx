@@ -34,6 +34,20 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
+import Button from "@mui/joy/Button";
+import FormControl from "@mui/joy/FormControl";
+import FormLabel from "@mui/joy/FormLabel";
+import Input from "@mui/joy/Input";
+import Modal from "@mui/joy/Modal";
+import ModalDialog from "@mui/joy/ModalDialog";
+import Stack from "@mui/joy/Stack";
+import Add from "@mui/icons-material/Add";
+import Textarea from "@mui/joy/Textarea";
+
+import Divider from "@mui/joy/Divider";
+import DeleteForever from "@mui/icons-material/DeleteForever";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
 }
@@ -50,6 +64,12 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function Slug() {
+  const [open, setOpen] = React.useState(false);
+  const [delModal, setDelModal] = React.useState<boolean>(false);
+  const [description, setDescription] = React.useState<string>("");
+  const [brand, setBrand] = React.useState<string>("");
+  const [step, setStep] = React.useState<number>(0);
+
   const [products, setProducts] = React.useState<string[]>([]);
   const [value, setValue] = React.useState("1");
 
@@ -77,6 +97,34 @@ export default function Slug() {
     });
   }, [id]);
 
+  const deleteProduct = () => {
+    axios
+      .delete(`https://dummyjson.com/products/${id}`)
+      .then((res: any) => {
+        console.log(res);
+        router.push("/");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const editProduct = (e: any) => {
+    axios
+      .put(`https://dummyjson.com/products/${id}`, { description, brand })
+      .then((res: any) => {
+        products[0].description = res.data.description;
+        products[0].brand = res.data.brand;
+        setDescription("");
+        setBrand("");
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    e.preventDefault();
+  };
+
   return (
     <>
       <button
@@ -88,10 +136,7 @@ export default function Slug() {
       </button>
       {products?.map((product: any) => (
         <div key={product.id}>
-          <div
-            
-            className={[styles.flex, styles.px1, styles.gap40].join(" ")}
-          >
+          <div className={[styles.flex, styles.px1, styles.gap40].join(" ")}>
             <div>
               <Card
                 sx={{
@@ -104,16 +149,17 @@ export default function Slug() {
                 <CardMedia
                   component="img"
                   height="500"
-                  image={product.thumbnail}
+                  image={product.images[step]}
                   alt="Paella dish"
                 />
               </Card>
               <div className={styles.imageGroup}>
-                {product.images.map((image: any) => (
+                {product.images.map((image, index) => (
                   <Image
+                    onClick={() => setStep(index)}
                     key={image}
                     src={image}
-                    className={styles.selected}
+                    className={step == index ? styles.select : styles.selected}
                     alt=""
                     objectFit="cover"
                     width={64}
@@ -149,11 +195,14 @@ export default function Slug() {
                 <span className={styles.price}>${product.price}</span>
               </p>
               <div className={styles.btnGroup}>
-                <button className={styles.edit}>
+                <button onClick={() => setOpen(true)} className={styles.edit}>
                   <Image src={editSVG} alt="edit" width={20} height={20} />
                   Изменить
                 </button>
-                <button className={styles.delete}>
+                <button
+                  onClick={() => setDelModal(true)}
+                  className={styles.delete}
+                >
                   <Image src={deleteSVG} alt="delete" width={16} height={16} />
                   Удалить
                 </button>
@@ -193,13 +242,102 @@ export default function Slug() {
                 </TabList>
               </Box>
               <TabPanel value="1">{product.description}</TabPanel>
-              <TabPanel value="2">
-                {product.category}
-              </TabPanel>
+              <TabPanel value="2">{product.category}</TabPanel>
             </TabContext>
           </Box>
         </div>
       ))}
+
+      {/* modal */}
+
+      <React.Fragment>
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <ModalDialog
+            aria-labelledby="basic-modal-dialog-title"
+            aria-describedby="basic-modal-dialog-description"
+            sx={{ maxWidth: 500 }}
+          >
+            <Typography>Edit the product</Typography>
+            <Typography id="basic-modal-dialog-description">
+              Fill in the information of the product.
+            </Typography>
+            <form onSubmit={(e) => editProduct(e)}>
+              <Stack spacing={2}>
+                <FormControl>
+                  <FormLabel>Brand</FormLabel>
+                  <Input autoFocus required />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Description</FormLabel>
+                  <Textarea
+                    placeholder="Bootstrap"
+                    minRows={2}
+                    sx={{
+                      "--Textarea-focusedInset": "var(--any, )",
+                      "--Textarea-focusedThickness": "0.25rem",
+                      "--Textarea-focusedHighlight": "rgba(13,110,253,.25)",
+                      "&::before": {
+                        transition: "box-shadow .15s ease-in-out",
+                      },
+                      "&:focus-within": {
+                        borderColor: "#86b7fe",
+                      },
+                    }}
+                    required
+                  />
+                </FormControl>
+                <Button type="submit">Submit</Button>
+              </Stack>
+            </form>
+          </ModalDialog>
+        </Modal>
+      </React.Fragment>
+
+      {/* delete modal */}
+      <React.Fragment>
+        <Modal open={delModal} onClose={() => setDelModal(false)}>
+          <ModalDialog
+            variant="outlined"
+            role="alertdialog"
+            aria-labelledby="alert-dialog-modal-title"
+            aria-describedby="alert-dialog-modal-description"
+          >
+            <Typography startDecorator={<WarningRoundedIcon />}>
+              Confirmation
+            </Typography>
+            <Divider />
+            <Typography
+              id="alert-dialog-modal-description"
+              textColor="text.tertiary"
+            >
+              Are you sure you want to discard all of your notes?
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                justifyContent: "flex-end",
+                pt: 2,
+              }}
+            >
+              <Button
+                variant="plain"
+                color="neutral"
+                onClick={() => setDelModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="solid"
+                color="danger"
+                onClick={() => deleteProduct()}
+              >
+                Discard notes
+              </Button>
+            </Box>
+          </ModalDialog>
+        </Modal>
+      </React.Fragment>
     </>
   );
 }
