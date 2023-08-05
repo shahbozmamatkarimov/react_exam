@@ -113,8 +113,9 @@ export default function Slug() {
     axios
       .put(`https://dummyjson.com/products/${id}`, { description, brand })
       .then((res: any) => {
-        products[0].description = res.data.description;
-        products[0].brand = res.data.brand;
+        alert(description, brand);
+        products[0].description = description;
+        products[0].brand = brand;
         setDescription("");
         setBrand("");
         setOpen(false);
@@ -265,11 +266,18 @@ export default function Slug() {
               <Stack spacing={2}>
                 <FormControl>
                   <FormLabel>Brand</FormLabel>
-                  <Input autoFocus required />
+                  <Input
+                    value={brand}
+                    onInput={(e) => setBrand(e.target.value)}
+                    autoFocus
+                    required
+                  />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Description</FormLabel>
                   <Textarea
+                    value={description}
+                    onInput={(e) => setDescription(e.target.value)}
                     placeholder="Bootstrap"
                     minRows={2}
                     sx={{

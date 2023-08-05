@@ -42,8 +42,9 @@ interface ExpandMoreProps extends IconButtonProps {
 }
 
 interface ProductData {
-  category: string;
-  price: number;
+  category?: string;
+  price?: number;
+  id?: number;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
@@ -58,7 +59,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function Cards() {
-  const [products, setProducts] = React.useState([]);
+  const [products, setProducts] = React.useState<ProductData[]>([]);
   const [editId, setEditId] = React.useState<number>();
   const [category, setCategory] = React.useState<string>("");
   const [price, setPrice] = React.useState<any>("");
@@ -99,7 +100,6 @@ export default function Cards() {
         if (typeof editId === "number") {
           for (let i in products) {
             if (products[i].id == editId) {
-              console.log("object");
               products[i].price = res.data.price;
               products[i].category = res.data.category;
             }
@@ -119,11 +119,11 @@ export default function Cards() {
     axios
       .delete(`https://dummyjson.com/products/${deleteId}`)
       .then((res: any) => {
-         for (let i in products) {
-            if (products[i].id == deleteId) {
-              products.splice(Number(i), 1);
-            }
+        for (let i in products) {
+          if (products[i].id == deleteId) {
+            products.splice(Number(i), 1);
           }
+        }
         setDelModal(false);
       })
       .catch((err) => {
