@@ -272,7 +272,7 @@ export default function Slug() {
                   <FormLabel>Brand</FormLabel>
                   <Input
                     value={brand}
-                    onInput={(e) => setBrand(e.target.value)}
+                    onInput={(e:any) => setBrand(e.target.value)}
                     autoFocus
                     required
                   />
@@ -281,7 +281,7 @@ export default function Slug() {
                   <FormLabel>Description</FormLabel>
                   <Textarea
                     value={description}
-                    onInput={(e) => setDescription(e.target.value)}
+                    onInput={(e:any) => setDescription(e.target.value)}
                     placeholder="Bootstrap"
                     minRows={2}
                     sx={{
