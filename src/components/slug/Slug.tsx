@@ -63,6 +63,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
+interface ProductData {
+  description?: string;
+  brand?: string;
+}
+
 export default function Slug() {
   const [open, setOpen] = React.useState(false);
   const [delModal, setDelModal] = React.useState<boolean>(false);
@@ -70,7 +75,7 @@ export default function Slug() {
   const [brand, setBrand] = React.useState<string>("");
   const [step, setStep] = React.useState<number>(0);
 
-  const [products, setProducts] = React.useState<string[]>([]);
+  const [products, setProducts] = React.useState<ProductData[]>([]);
   const [value, setValue] = React.useState("1");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -113,7 +118,6 @@ export default function Slug() {
     axios
       .put(`https://dummyjson.com/products/${id}`, { description, brand })
       .then((res: any) => {
-        alert(description, brand);
         products[0].description = description;
         products[0].brand = brand;
         setDescription("");
@@ -155,7 +159,7 @@ export default function Slug() {
                 />
               </Card>
               <div className={styles.imageGroup}>
-                {product.images.map((image, index) => (
+                {product.images.map((image:string, index:number) => (
                   <Image
                     onClick={() => setStep(index)}
                     key={image}
@@ -310,14 +314,11 @@ export default function Slug() {
             aria-labelledby="alert-dialog-modal-title"
             aria-describedby="alert-dialog-modal-description"
           >
-            <Typography startDecorator={<WarningRoundedIcon />}>
+            <Typography>
               Confirmation
             </Typography>
             <Divider />
-            <Typography
-              id="alert-dialog-modal-description"
-              textColor="text.tertiary"
-            >
+            <Typography>
               Are you sure you want to discard all of your notes?
             </Typography>
             <Box
